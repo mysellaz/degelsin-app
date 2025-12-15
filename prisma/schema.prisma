@@ -1,0 +1,38 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Media {
+  id          String   @id @default(cuid())
+  type        String   // "photo" or "video"
+  filename    String
+  path        String
+  title       String?
+  description String?
+  order       Int      @default(0)
+  hotspots    Hotspot[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Hotspot {
+  id       String  @id @default(cuid())
+  mediaId  String
+  media    Media   @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  x        Float   // X coordinate (percentage)
+  y        Float   // Y coordinate (percentage)
+  audioPath String?
+  comment  String?
+  createdAt DateTime @default(now())
+}
+
+model Admin {
+  id       String @id @default(cuid())
+  username String @unique
+  password String // hashed
+}
